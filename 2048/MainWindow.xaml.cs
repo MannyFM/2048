@@ -37,6 +37,7 @@ namespace _2048
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Height = share.H * share.title_h,
                 Width = share.W * share.title_w,
+                IsEnabled = false
                 //Background = Brushes.Aqua
             };
             mainGrid.Children.Add(grid);
@@ -74,9 +75,12 @@ namespace _2048
                     Grid.SetRow(textBox[i, j], i);
                 }
             }
+            for (int i = 0; i < share.initialTitleCount; i++)
+                map.AddTittle();
             Draw();
+            
         }
-
+        
         void Draw()
         {
             pointsLabel.Content = "Pts: " + map.points.ToString();
@@ -89,35 +93,40 @@ namespace _2048
 
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        void WPFOnKeyDown(object sender, KeyEventArgs e)
         {
-            map.AddTittle();
-            Draw();
+            //MessageBox.Show(e.Key.ToString());
+            if (e.Key == Key.Up)
+                if (map.MoveUp())
+                {
+                    map.AddTittle();
+                    Draw();
+                }
+            if (e.Key == Key.Down)
+                if (map.MoveDown())
+                {
+                    map.AddTittle();
+                    Draw();
+                }
+            if (e.Key == Key.Right)
+                if (map.MoveRight())
+                {
+                    map.AddTittle();
+                    Draw();
+                }
+            if (e.Key == Key.Left)
+                if (map.MoveLeft())
+                {
+                    map.AddTittle();
+                    Draw();
+                }
         }
 
-        private void moveLeftButoon_Click(object sender, RoutedEventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            map.MoveLeft();
-            Draw();
+            this.KeyDown += new KeyEventHandler(WPFOnKeyDown);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            map.MoveRight();
-            Draw();
-        }
-
-        private void moveUpButton_Click(object sender, RoutedEventArgs e)
-        {
-            map.MoveUp();
-            Draw();
-        }
-
-        private void moveDownButton_Click(object sender, RoutedEventArgs e)
-        {
-            map.MoveDown();
-            Draw();
-        }
     }
     static public class share
     {
@@ -129,6 +138,8 @@ namespace _2048
 
         public const int title_h = 50;
         public const int title_w = 50;
+
+        public const int initialTitleCount = 4;
 
         public static int Rand()
         {
