@@ -29,17 +29,20 @@ namespace _2048
         {
             canvas = new Canvas();
             InitializeComponent();
-            map = new Map();
+            map = new Map(share.H, share.W);
             grid = new Grid
             {
                 ShowGridLines = true,
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Height = share.H * share.title_h,
-                Width = share.W * share.title_w,
+                Height = share.H * (share.title_h),
+                Width = share.W * (share.title_w),
                 IsEnabled = false
                 //Background = Brushes.Aqua
             };
+            this.Width = grid.Width + 16;
+            this.Height = grid.Height + 38;
+            this.ResizeMode = ResizeMode.NoResize;
             mainGrid.Children.Add(grid);
             for (int i = 0; i < share.H; i++)
             {
@@ -67,6 +70,9 @@ namespace _2048
                     textBox[i, j] = new TextBox
                     {
                         Text = map.array[i, j].val.ToString(),
+                        FontSize = share.textSize,
+                        TextAlignment = TextAlignment.Center,
+                        //VerticalAlignment = VerticalAlignment.Center
                     };
                     zIndex++;
                     grid.Children.Add(textBox[i, j]);
@@ -83,7 +89,7 @@ namespace _2048
         
         void Draw()
         {
-            pointsLabel.Content = "Pts: " + map.points.ToString();
+            this.Title = "Pts: " + map.points.ToString();
             for (int i = 0; i < share.H; i++)
                 for (int j = 0; j < share.W; j++)
                 {
@@ -91,6 +97,14 @@ namespace _2048
                     //MessageBox.Show("text: |" + textBox[i, j].Text + "| " + i + " " + j + " " + Canvas.GetZIndex(textBox[i, j]));
                 }
 
+        }
+
+        void CheckCanIMove()
+        {
+            if (map.CanMove())
+                return;
+            MessageBox.Show("Game Over. Your Score is " + map.points.ToString());
+            map.isGameEnded = true;
         }
 
         void WPFOnKeyDown(object sender, KeyEventArgs e)
@@ -120,6 +134,8 @@ namespace _2048
                     map.AddTittle();
                     Draw();
                 }
+            if (!map.isGameEnded)
+                CheckCanIMove();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -133,11 +149,13 @@ namespace _2048
         static Random random = new Random();
 
         public static int Points = 0;
-        public const int H = 4;
-        public const int W = 4;
+        public const int H = 3;
+        public const int W = 3;
 
-        public const int title_h = 50;
-        public const int title_w = 50;
+        public const int title_h = 100;
+        public const int title_w = 100;
+
+        public const int textSize = 40;
 
         public const int initialTitleCount = 4;
 

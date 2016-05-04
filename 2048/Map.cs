@@ -58,12 +58,24 @@ namespace _2048
     {
         public title[,] array;
         public int points = 0;
-        public int freeTitles = share.H * share.W;
+        public int H = 4, W = 4;
+        public int freeTitles = 16;
+        public bool isGameEnded = false;
+
         public Map()
         {
-            array = new title[share.H, share.W];
-            for (int i = 0; i < share.H; i++)
-                for (int j = 0; j < share.W; j++)
+            H = 4;
+            W = 4;
+        }
+
+        public Map(int hight, int width)
+        {
+            H = hight;
+            W = width;
+            freeTitles = H * W;
+            array = new title[H, W];
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
                     array[i, j] = new title();
         }
 
@@ -76,11 +88,11 @@ namespace _2048
             }
             while (true)
             {
-                int x = share.Rand(share.W);
-                int y = share.Rand(share.H);
-                if (array[x, y].empty)
+                int x = share.Rand(W);
+                int y = share.Rand(H);
+                if (array[y, x].empty)
                 {
-                    array[x, y].Initialize();
+                    array[y, x].Initialize();
                     break;
                 }
             }
@@ -97,8 +109,8 @@ namespace _2048
         public bool MoveLeft()
         {
             bool ok = false;
-            for (int i = 0; i < share.H; i++)
-                for (int j = 1; j < share.W; j++)
+            for (int i = 0; i < H; i++)
+                for (int j = 1; j < W; j++)
                     for (int k = j - 1; k >= 0; k--)
                     {
                         if (array[i, k].canCombine(array[i, k + 1]))
@@ -126,9 +138,9 @@ namespace _2048
         public bool MoveRight()
         {
             bool ok = false;
-            for (int i = 0; i < share.H; i++)
-                for (int j = share.W - 2; j >= 0; j--)
-                    for (int k = j + 1; k < share.W; k++)
+            for (int i = 0; i < H; i++)
+                for (int j = W - 2; j >= 0; j--)
+                    for (int k = j + 1; k < W; k++)
                     {
                         if (array[i, k].canCombine(array[i, k - 1]))
                         {
@@ -155,8 +167,8 @@ namespace _2048
         public bool MoveUp()
         {
             bool ok = false;
-            for (int j = 0; j < share.W; j++)
-                for (int i = 1; i < share.H; i++)
+            for (int j = 0; j < W; j++)
+                for (int i = 1; i < H; i++)
                     for (int k = i - 1; k >= 0; k--)
                     {
                         if (array[k, j].canCombine(array[k + 1, j]))
@@ -184,9 +196,9 @@ namespace _2048
         public bool MoveDown()
         {
             bool ok = false;
-            for (int j = 0; j < share.W; j++)
-                for (int i = share.H - 2; i >= 0; i--)
-                    for (int k = i + 1; k < share.H; k++)
+            for (int j = 0; j < W; j++)
+                for (int i = H - 2; i >= 0; i--)
+                    for (int k = i + 1; k < H; k++)
                     {
                         if (array[k, j].canCombine(array[k - 1, j]))
                         {
@@ -210,5 +222,19 @@ namespace _2048
             return ok;
         }
 
+        public bool CanMove()
+        {
+            if (freeTitles > 0)
+                return true;
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
+                {
+                    if (i + 1 < H && array[i, j].canCombine(array[i + 1, j]))
+                        return true;
+                    if (j + 1 < W && array[i, j].canCombine(array[i, j + 1]))
+                        return true;
+                }
+            return false;
+        }
     }
 }
