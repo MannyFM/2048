@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Media;
 
 namespace _2048
 {
@@ -18,11 +19,13 @@ namespace _2048
             empty = true;
             val = -1;
         }
+
         public title(title t)
         {
             empty = t.empty;
             val = t.val;
         }
+
         public title(int setVal)
         {
             empty = false;
@@ -33,6 +36,12 @@ namespace _2048
         {
             empty = false;
             val = share.Rand(9, 1) + 1;
+        }
+
+        public void Initialize(int value)
+        {
+            empty = false;
+            val = value;
         }
 
         public bool canCombine(title t)
@@ -47,13 +56,51 @@ namespace _2048
             val += t.val;
             return val;
         }
+
         public string getValue()
         {
             if (empty)
                 return "";
             return val.ToString();
         }
+
+        public Brush titleBrush
+        {
+            get
+            {
+                if (this.empty)
+                    return Brushes.Transparent;
+                if (this.val == 1)
+                    return Brushes.LightYellow;
+                if (this.val == 2)
+                    return Brushes.LightGoldenrodYellow;
+                if (this.val == 4)
+                    return Brushes.Yellow;
+                if (this.val == 8)
+                    return Brushes.GreenYellow;
+                if (this.val == 16)
+                    return Brushes.YellowGreen;
+                if (this.val == 32)
+                    return Brushes.Orange;
+                if (this.val == 64)
+                    return Brushes.Tomato;
+                if (this.val == 128)
+                    return Brushes.Red;
+                if (this.val == 256)
+                    return Brushes.LightBlue;
+                if (this.val == 512)
+                    return Brushes.DeepSkyBlue;
+                if (this.val == 1024)
+                    return Brushes.Violet;
+                if (this.val == 2048)
+                    return Brushes.Indigo;
+
+                return Brushes.Black;
+            }
+            set { }
+        }
     }
+
     class Map
     {
         public title[,] array;
@@ -83,7 +130,7 @@ namespace _2048
         {
             if (freeTitles <= 0)
             {
-                MessageBox.Show("No free space");
+                MessageBox.Show("No free space :(");
                 return;
             }
             while (true)
@@ -93,6 +140,26 @@ namespace _2048
                 if (array[y, x].empty)
                 {
                     array[y, x].Initialize();
+                    break;
+                }
+            }
+            freeTitles--;
+        }
+
+        public void AddTittle(int value)
+        {
+            if (freeTitles <= 0)
+            {
+                MessageBox.Show("No free space :(");
+                return;
+            }
+            while (true)
+            {
+                int x = share.Rand(W);
+                int y = share.Rand(H);
+                if (array[y, x].empty)
+                {
+                    array[y, x].Initialize(value);
                     break;
                 }
             }

@@ -24,7 +24,7 @@ namespace _2048
         Canvas canvas;
         Map map;
         Grid grid;
-        TextBox[,] textBox;
+        Label[,] labels;
         public MainWindow()
         {
             canvas = new Canvas();
@@ -43,7 +43,9 @@ namespace _2048
             this.Width = grid.Width + 16;
             this.Height = grid.Height + 38;
             this.ResizeMode = ResizeMode.NoResize;
+
             mainGrid.Children.Add(grid);
+
             for (int i = 0; i < share.H; i++)
             {
                 RowDefinition row = new RowDefinition
@@ -53,6 +55,7 @@ namespace _2048
                 };
                 grid.RowDefinitions.Add(row);
             }
+
             for (int i = 0; i < share.W; i++)
             {
                 ColumnDefinition column = new ColumnDefinition
@@ -61,28 +64,40 @@ namespace _2048
                 };
                 grid.ColumnDefinitions.Add(column);
             }
+
             int zIndex = Canvas.GetZIndex(grid);
-            textBox = new TextBox[share.H, share.W];
+            labels = new Label[share.H, share.W];
             for (int i = 0; i < share.H; i++)
             {
                 for (int j = 0; j < share.W; j++)
                 {
-                    textBox[i, j] = new TextBox
+                    labels[i, j] = new Label
                     {
-                        Text = map.array[i, j].val.ToString(),
+                        Content = map.array[i, j].val.ToString(),
                         FontSize = share.textSize,
-                        TextAlignment = TextAlignment.Center,
-                        //VerticalAlignment = VerticalAlignment.Center
+                        HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
+                        VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                        //Background = map.array[i, j].titleBrush,
                     };
                     zIndex++;
-                    grid.Children.Add(textBox[i, j]);
-                    Grid.SetZIndex(textBox[i, j], zIndex);
-                    Grid.SetColumn(textBox[i, j], j);
-                    Grid.SetRow(textBox[i, j], i);
+                    grid.Children.Add(labels[i, j]);
+                    Grid.SetZIndex(labels[i, j], zIndex);
+                    Grid.SetColumn(labels[i, j], j);
+                    Grid.SetRow(labels[i, j], i);
                 }
             }
+
             for (int i = 0; i < share.initialTitleCount; i++)
                 map.AddTittle();
+            /*
+            int cnt = 1;
+            for (int i = 0; i < share.H; i++)
+                for (int j = 0; j < share.W; j++)
+                {
+                    map.array[i, j].Initialize(cnt);
+                    cnt += cnt;
+                }
+            */
             Draw();
             
         }
@@ -93,7 +108,8 @@ namespace _2048
             for (int i = 0; i < share.H; i++)
                 for (int j = 0; j < share.W; j++)
                 {
-                    textBox[i, j].Text = map.array[i, j].getValue();
+                    labels[i, j].Content = map.array[i, j].getValue();
+                    labels[i, j].Background = map.array[i, j].titleBrush;
                     //MessageBox.Show("text: |" + textBox[i, j].Text + "| " + i + " " + j + " " + Canvas.GetZIndex(textBox[i, j]));
                 }
 
@@ -144,13 +160,14 @@ namespace _2048
         }
 
     }
+
     static public class share
     {
         static Random random = new Random();
 
         public static int Points = 0;
-        public const int H = 3;
-        public const int W = 3;
+        public const int H = 4;
+        public const int W = 4;
 
         public const int title_h = 100;
         public const int title_w = 100;
