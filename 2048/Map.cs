@@ -126,6 +126,19 @@ namespace _2048
                     array[i, j] = new title();
         }
 
+        public void NewGame(int titleCount)
+        {
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
+                    if (!array[i, j].empty)
+                        array[i, j] = new title();
+            freeTitles = H * W;
+            points = 0;
+            isGameEnded = false;
+            for (int i = 0; i < titleCount; i++)
+                AddTittle();
+        }
+
         public void AddTittle()
         {
             if (freeTitles <= 0)

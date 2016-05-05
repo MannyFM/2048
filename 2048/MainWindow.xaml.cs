@@ -30,6 +30,7 @@ namespace _2048
             canvas = new Canvas();
             InitializeComponent();
             map = new Map(share.H, share.W);
+            map.NewGame(share.initialTitleCount);
             grid = new Grid
             {
                 ShowGridLines = true,
@@ -87,8 +88,6 @@ namespace _2048
                 }
             }
 
-            for (int i = 0; i < share.initialTitleCount; i++)
-                map.AddTittle();
             /*
             int cnt = 1;
             for (int i = 0; i < share.H; i++)
@@ -119,13 +118,37 @@ namespace _2048
         {
             if (map.CanMove())
                 return;
-            MessageBox.Show("Game Over. Your Score is " + map.points.ToString());
+            MessageBox.Show("Game Over. Your Score is " + map.points.ToString(), "Game over");
             map.isGameEnded = true;
         }
 
+        bool StartNewGame()
+        {
+            if (map.isGameEnded)
+            {
+                map.NewGame(share.initialTitleCount);
+                return true;
+            }
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure?", "New Game", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    map.NewGame(share.initialTitleCount);
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         void WPFOnKeyDown(object sender, KeyEventArgs e)
         {
             //MessageBox.Show(e.Key.ToString());
+            if (e.Key == Key.R && ((Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control)))
+            {
+                if (StartNewGame())
+                    Draw();
+            }
             if (e.Key == Key.Up)
                 if (map.MoveUp())
                 {
