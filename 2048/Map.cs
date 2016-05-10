@@ -92,24 +92,8 @@ namespace _2048
         };
 
         public static int[] value = new int[maxSize];
-
-        public Map()
-        {
-            H = 4;
-            W = 4;
-            freeTitles = H * W;
-            array = new title[H, W];
-            for (int i = 0; i < H; i++)
-                for (int j = 0; j < W; j++)
-                    array[i, j] = new title();
-            for (int i = 0; i < maxSize; i++)
-            {
-                value[i] = (int)Math.Pow(2, i);
-                //MessageBox.Show(value[i].ToString());
-            }
-        }
-
-        public Map(int hight, int width)
+        
+        public Map(int hight = 4, int width = 4)
         {
             H = hight;
             W = width;
@@ -118,11 +102,10 @@ namespace _2048
             for (int i = 0; i < H; i++)
                 for (int j = 0; j < W; j++)
                     array[i, j] = new title();
-            for (int i = 0; i < maxSize; i++)
-            {
-                value[i] = (int)Math.Pow(2, i);
-                //MessageBox.Show(value[i].ToString());
-            }
+            value[0] = 0;
+            value[1] = 2;
+            for (int i = 2; i < maxSize; i++)
+                value[i] = value[i - 1] + value[i - 1];
         }
 
         public int nextValue(int prev, int cur)
@@ -137,8 +120,6 @@ namespace _2048
                     if (!array[i, j].empty)
                         array[i, j] = new title();
             freeTitles = H * W;
-            for (int i = 0; i < maxSize; i++)
-                value[i] = (int)Math.Pow(2, i);
             points = 0;
             isGameEnded = false;
             for (int i = 0; i < titleCount; i++)
