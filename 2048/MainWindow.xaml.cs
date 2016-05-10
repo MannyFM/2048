@@ -74,7 +74,7 @@ namespace _2048
                 {
                     labels[i, j] = new Label
                     {
-                        Content = map.array[i, j].val.ToString(),
+                        Content = map.array[i, j].index.ToString(),
                         FontSize = share.textSize,
                         HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                         VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
@@ -107,11 +107,13 @@ namespace _2048
             for (int i = 0; i < share.H; i++)
                 for (int j = 0; j < share.W; j++)
                 {
-                    labels[i, j].Content = map.array[i, j].getValue();
+                    labels[i, j].Content = map.array[i, j].getIndex();
                     labels[i, j].Background = map.array[i, j].titleBrush;
                     //MessageBox.Show("text: |" + textBox[i, j].Text + "| " + i + " " + j + " " + Canvas.GetZIndex(textBox[i, j]));
                 }
-
+            int mx = map.MaxTitle();
+            if (mx == share.winTitle)
+                MessageBox.Show("You won!");
         }
 
         void CheckCanIMove()
@@ -198,6 +200,7 @@ namespace _2048
         public const int textSize = 40;
 
         public const int initialTitleCount = 4;
+        public const int winTitle = 2048;
 
         public static int Rand()
         {

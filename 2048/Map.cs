@@ -11,90 +11,65 @@ namespace _2048
 {
     class title
     {
-        public int val;
+        public int index;
         public bool empty;
 
         public title()
         {
             empty = true;
-            val = -1;
+            index = 0;
         }
 
         public title(title t)
         {
             empty = t.empty;
-            val = t.val;
+            index = t.index;
         }
 
         public title(int setVal)
         {
             empty = false;
-            val = setVal;
+            index = setVal;
         }
 
-        public void Initialize()
+        public void Initialize(int value = 0)
         {
             empty = false;
-            val = share.Rand(9, 1) + 1;
-        }
-
-        public void Initialize(int value)
-        {
-            empty = false;
-            val = value;
+            if (value == 0)
+                index = share.Rand(9, 1) + 1;
+            else
+                index = value;
         }
 
         public bool canCombine(title t)
         {
-            return val != -1 && t.val == val;
+            return index != 0 && t.index == index;
         }
 
         public int Combine(title t)
         {
             if (!canCombine(t))
                 return 0;
-            val += t.val;
-            return val;
+            return ++index;
         }
 
-        public string getValue()
+        public string getIndex()
         {
-            if (empty)
+            if (empty || index == 0)
                 return "";
-            return val.ToString();
+            if (index < Map.value.Length)
+                return Map.value[index].ToString();
+            return "-1";
         }
 
         public Brush titleBrush
         {
             get
             {
-                if (this.empty)
+                if (this.empty || index == 0)
                     return Brushes.Transparent;
-                if (this.val == 1)
-                    return Brushes.LightYellow;
-                if (this.val == 2)
-                    return Brushes.LightGoldenrodYellow;
-                if (this.val == 4)
-                    return Brushes.Yellow;
-                if (this.val == 8)
-                    return Brushes.GreenYellow;
-                if (this.val == 16)
-                    return Brushes.YellowGreen;
-                if (this.val == 32)
-                    return Brushes.Orange;
-                if (this.val == 64)
-                    return Brushes.Tomato;
-                if (this.val == 128)
-                    return Brushes.Red;
-                if (this.val == 256)
-                    return Brushes.LightBlue;
-                if (this.val == 512)
-                    return Brushes.DeepSkyBlue;
-                if (this.val == 1024)
-                    return Brushes.Violet;
-                if (this.val == 2048)
-                    return Brushes.Indigo;
-
+                if (index < Map.titleColor.Length)
+                    return Map.titleColor[index];
                 return Brushes.Black;
             }
             set { }
@@ -109,21 +84,50 @@ namespace _2048
         public int freeTitles = 16;
         public bool isGameEnded = false;
 
+        public const int maxSize = 15;
+        public static Brush[] titleColor =
+        {
+            Brushes.Transparent, Brushes.LightYellow, Brushes.LightGoldenrodYellow, Brushes.Yellow, Brushes.GreenYellow, Brushes.Orange, Brushes.Tomato, Brushes.Red,
+            Brushes.LightBlue, Brushes.DeepSkyBlue, Brushes.Violet, Brushes.Indigo,
+        };
+
+        public static int[] value = new int[maxSize];
+
         public Map()
         {
             H = 4;
             W = 4;
+            freeTitles = H * W;
+            array = new title[H, W];
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
+                    array[i, j] = new title();
+            for (int i = 0; i < maxSize; i++)
+            {
+                value[i] = (int)Math.Pow(2, i);
+                //MessageBox.Show(value[i].ToString());
+            }
         }
 
         public Map(int hight, int width)
         {
             H = hight;
             W = width;
-            freeTitles = H * W;
             array = new title[H, W];
+            freeTitles = H * W;
             for (int i = 0; i < H; i++)
                 for (int j = 0; j < W; j++)
                     array[i, j] = new title();
+            for (int i = 0; i < maxSize; i++)
+            {
+                value[i] = (int)Math.Pow(2, i);
+                //MessageBox.Show(value[i].ToString());
+            }
+        }
+
+        public int nextValue(int prev, int cur)
+        {
+            return prev + cur;
         }
 
         public void NewGame(int titleCount)
@@ -133,33 +137,15 @@ namespace _2048
                     if (!array[i, j].empty)
                         array[i, j] = new title();
             freeTitles = H * W;
+            for (int i = 0; i < maxSize; i++)
+                value[i] = (int)Math.Pow(2, i);
             points = 0;
             isGameEnded = false;
             for (int i = 0; i < titleCount; i++)
                 AddTittle();
         }
 
-        public void AddTittle()
-        {
-            if (freeTitles <= 0)
-            {
-                MessageBox.Show("No free space :(");
-                return;
-            }
-            while (true)
-            {
-                int x = share.Rand(W);
-                int y = share.Rand(H);
-                if (array[y, x].empty)
-                {
-                    array[y, x].Initialize();
-                    break;
-                }
-            }
-            freeTitles--;
-        }
-
-        public void AddTittle(int value)
+        public void AddTittle(int value = 0)
         {
             if (freeTitles <= 0)
             {
@@ -315,6 +301,17 @@ namespace _2048
                         return true;
                 }
             return false;
+        }
+
+        public int MaxTitle()
+        {
+            if (freeTitles == H * W)
+                return -1;
+            int mx = -1;
+            for (int i = 0; i < H; i++)
+                for (int j = 0; j < W; j++)
+                    mx = Math.Max(mx, array[i, j].index);
+            return mx;
         }
     }
 }
